@@ -1,0 +1,16 @@
+{
+  "name": "nodeserver",
+  "version": "1.0.0",
+  "description": "ExpressJS server for authenticating user and returning a valid token",
+  "scripts": {
+    "start": "node server"
+  },
+  "main": "index.js",
+  "author": "Amandeep Singh",
+  "license": "MIT",
+  "dependencies": {
+    "basic-auth": "^2.0.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.2.1"
+  }
+}
