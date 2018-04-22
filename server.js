@@ -14,9 +14,11 @@ app.get("/api", (req, res) => {
   });
 });
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   if (!req.headers.authorization) {
-    return res.status(403).json({ error: "No credentials sent!" });
+    return res.status(403).json({
+      error: "No credentials sent!"
+    });
   }
   next();
 });
@@ -26,13 +28,21 @@ app.post("/api/login", (req, res) => {
 
   // hardcoded user {name: 'test', pass: 'react'}
   if (user.name !== "test" && user.pass !== "react") {
-    return res.status(401).json({ error: "Unauthorized user" });
+    return res.status(401).json({
+      error: "Invalid Credentials"
+    });
   }
   // user is authenticated and now server sends a signed token back to client
   // client can store this token to the local storage and every time client asks for protected api resources,
   // it send token attached in authorization header with 'bearer' authentication scheme.
-  const token = jwt.sign({ user }, "my_secret_key");
-  res.json({ token });
+  const token = jwt.sign({
+    user,
+  }, "my_secret_key", {
+    expiresIn: '2h'
+  });
+  res.json({
+    token
+  });
 });
 
 // protected api
@@ -40,7 +50,9 @@ app.get("/api/protected", ensureToken, (req, res) => {
   // server verifies the token (verifies the client )
   jwt.verify(req.token, "my_secret_key", (err, data) => {
     if (err) {
-      res.status(403).json({ error: err });
+      res.status(403).json({
+        error: err
+      });
     } else {
       res.json({
         text: `this is protected`,
@@ -55,11 +67,12 @@ function ensureToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
 
   if (bearerHeader) {
-    console.log(bearerHeader);
     req.token = bearerHeader.split(" ")[1];
     next();
   } else {
-    return res.status(403).json({ error: "No credentials sent!" });
+    return res.status(403).json({
+      error: "No credentials sent!"
+    });
   }
 }
 
