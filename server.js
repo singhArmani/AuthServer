@@ -27,22 +27,25 @@ app.post("/api/login", (req, res) => {
   const user = auth(req);
 
   // hardcoded user {name: 'test', pass: 'react'}
-  if (user.name !== "test" && user.pass !== "react") {
-    return res.status(401).json({
+  if (user.name === "test" && user.pass === "react") {
+    // user is authenticated and now server sends a signed token back to client
+    // client can store this token to the local storage and every time client asks for protected api resources,
+    // it send token attached in authorization header with 'bearer' authentication scheme.
+    const token = jwt.sign({
+      user,
+    }, "my_secret_key", {
+        expiresIn: '2h' // setting the token expiry time to be 2h
+      });
+    res.json({
+      token
+    });
+  } else {
+    res.status(401).json({
       error: "Invalid Credentials"
     });
   }
-  // user is authenticated and now server sends a signed token back to client
-  // client can store this token to the local storage and every time client asks for protected api resources,
-  // it send token attached in authorization header with 'bearer' authentication scheme.
-  const token = jwt.sign({
-    user,
-  }, "my_secret_key", {
-    expiresIn: '2h'
-  });
-  res.json({
-    token
-  });
+
+
 });
 
 // protected api
